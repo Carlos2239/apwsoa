@@ -1,23 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Usuario</title>
+    <title>Registrate - Expedia SOA</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Registro de Usuario</h1>
-    <form id="registerForm">
-        <label for="username">Nombre de usuario:</label>
-        <input type="text" id="username" name="username" required><br><br>
-        <label for="password">Contraseña:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        <label for="email">Correo electrónico:</label>
-        <input type="email" id="email" name="email" required><br><br>
-        <input type="submit" value="Registrar">
-    </form>
+    <nav class="navbar navbar-dark">
+        <div class="container">
+            <a href="index.html" class="navbar-soa">Expedia SOA</a>
+        </div>
+    </nav>
 
-    <script src="scripts.js"></script>
+    <div class="login-wrapper">
+        <div class="main-card">
+            <h3>Crea tu cuenta</h3>
+            <p class="text-muted">Forma parte de SOA</p>
+
+            <form action="auth.php" method="POST" class="text-start mt-4">
+                
+                <input type="hidden" name="action" value="register">
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nombre de usuario</label>
+                    <input type="text" name="username" class="form-control" placeholder="Elige un nombre de usuario" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Correo electrónico</label>
+                    <input type="email" name="email" class="form-control" placeholder="tu.email@ejemplo.com" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Contraseña</label>
+                    <input type="password" name="password" class="form-control" placeholder="Crea una contraseña segura" required>
+                </div>
+
+                <button type="submit" class="btn btn-expedia">Registrarse</button>
+            </form>
+
+            <hr>
+            <p class="text-muted">¿Ya tienes cuenta? 
+                <a href="login.html" class="fw-bold">Inicia sesión aquí</a>
+            </p>
+        </div>
+    </div>
 </body>
 </html>

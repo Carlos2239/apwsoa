@@ -1,22 +1,133 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscar Vuelos</title>
+    <title>Buscador de Vuelos - Expedia SOA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Buscar Vuelos</h1>
-    <form id="searchForm">
-        <label for="origin">Origen:</label>
-        <input type="text" id="origin" name="origin" required><br><br>
-        <label for="destination">Destino:</label>
-        <input type="text" id="destination" name="destination" required><br><br>
-        <input type="submit" value="Buscar">
-    </form>
-    <div id="results"></div>
+    <nav class="navbar navbar-dark">
+        <div class="container">
+            <a href="index.html" class="navbar-soa">Expedia SOA</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link text-white fw-bold" href="reservations.html">Mis viajes</a>
+            </div>
+        </div>
+    </nav>
 
-    <script src="scripts.js"></script>
+    <div class="container mt-4">
+        <div class="main-card-wide shadow-sm">
+            <h2 class="mb-4" style="color: var(--expedia-blue); font-weight: 800;">Busca tu próximo destino</h2>
+            
+            <form id="searchForm" class="row g-2">
+                <div class="col-md-5">
+                    <div class="form-floating">
+                        <input type="text" name="origin" class="form-control" id="originInput" placeholder="Origen" required>
+                        <label for="originInput">Origen (ej. Ciudad Juarez)</label>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-floating">
+                        <input type="text" name="destination" class="form-control" id="destInput" placeholder="Destino" required>
+                        <label for="destInput">Destino (ej. Cancun)</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-expedia h-100 w-100 m-0">Buscar</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="mt-5">
+            <h3 class="mb-4">Vuelos disponibles</h3>
+            <div class="table-responsive">
+                <table class="table-expedia w-100 shadow-sm">
+                    <thead>
+                        <tr>
+                            <th>Aerolínea</th>
+                            <th>Origen / Destino</th>
+                            <th>Salida</th>
+                            <th>Precio</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody">
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">Ingresa una ruta para ver resultados</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        fetch('search_flights.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('resultsBody');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-3">No se encontraron vuelos para esa ruta.</td></tr>';
+                return;
+            }
+
+            data.forEach(flight => {
+                const row = `
+                    <tr class="align-middle flight-row">
+                        <td><strong>SOA Airlines</strong></td>
+                        <td class="text-primary fw-bold">${flight.origin} → ${flight.destination}</td>
+                        <td>${flight.departure_date}</td>
+                        <td class="text-success fw-bold">$${flight.price} MXN</td>
+                        <td class="text-end">
+                            <button onclick="reservar(${flight.flight_id})" class="btn btn-expedia btn-sm py-2 px-4 w-auto">Seleccionar</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+    function reservar(flightId) {
+        const userId = localStorage.getItem('user_id');
+
+        if (!userId) {
+            alert("⚠️ Error: No has iniciado sesión.");
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('user_id', userId);
+        formData.append('flight_id', flightId);
+
+        fetch('reserve_flight.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(msg => {
+            if(msg.includes("successful")) {
+                alert("✅ ¡Vuelo reservado con éxito!");
+                window.location.href = 'reservations.html';
+            } else {
+                alert("❌ Error al reservar: " + msg);
+            }
+        });
+    }
+    </script>
 </body>
 </html>

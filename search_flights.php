@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
-$username = "root";
-$password = "";
+$username = "admin";     
+$password = "admin123";   
 $dbname = "flight_reservation";
 
 // Crear conexión
@@ -25,3 +25,4 @@ echo json_encode($flights);
 
 $conn->close();
 ?>
+

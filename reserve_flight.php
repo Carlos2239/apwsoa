@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
-$username = "root";
-$password = "";
+$username = "admin";     
+$password = "admin123";   
 $dbname = "flight_reservation";
 
 // Crear conexión
@@ -24,3 +24,4 @@ if ($conn->query($sql) === TRUE) {
 
 $conn->close();
 ?>
+

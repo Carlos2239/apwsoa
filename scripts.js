@@ -5,5 +5,18 @@ document.addEventListener('DOMContentLoaded', () => {
         registerForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
-            formData.append('action', 'register');
-            fetch
+
+            console.log("Register form submitted (Not implemented)");
+        });
+    }
+    const menuToggle = document.getElementById('mobile-menu');
+    const navLinks = document.querySelector('.nav-links');
+
+    if (menuToggle && navLinks) {
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+        });
+    }
+});
+

@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
-$username = "root";
-$password = "";
+$username = "admin";
+$password = "admin123";
 $dbname = "flight_reservation";
 
 // Crear conexión
@@ -12,34 +12,62 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Registro de usuario
-if ($_POST['action'] == 'register') {
+// --- CASO 1: REGISTRO ---
+if (isset($_POST['action']) && $_POST['action'] == 'register') {
     $user = $_POST['username'];
+    // Encriptamos la contraseña
     $pass = password_hash($_POST['password'], PASSWORD_BCRYPT);
     $email = $_POST['email'];
+    
     $sql = "INSERT INTO Users (username, password, email) VALUES ('$user', '$pass', '$email')";
+    
     if ($conn->query($sql) === TRUE) {
-        echo "Registration successful";
+        // ÉXITO: Alerta y mandar al Login
+        echo "<script>
+                alert('¡Registro exitoso! Ahora inicia sesión.');
+                window.location.href='login.html';
+              </script>";
     } else {
-        echo "Error: " . $conn->error;
+        // ERROR: Alerta y regresar al Registro
+        echo "<script>
+                alert('Error al registrar: " . $conn->error . "');
+                window.history.back();
+              </script>";
     }
 }
 
-// Inicio de sesión
-if ($_POST['action'] == 'login') {
+// --- CASO 2: LOGIN ---
+if (isset($_POST['action']) && $_POST['action'] == 'login') {
     $user = $_POST['username'];
     $pass = $_POST['password'];
-    $sql = "SELECT password FROM Users WHERE username='$user'";
+    
+    $sql = "SELECT * FROM Users WHERE username='$user'";
     $result = $conn->query($sql);
+    
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         if (password_verify($pass, $row['password'])) {
-            echo "Login successful";
+            // ÉXITO: Guardar ID en una variable de sesión (opcional pero útil) y redirigir
+            // Aquí mandamos al usuario a Reservaciones
+            echo "<script>
+                    alert('¡Bienvenido " . $row['username'] . "!');
+                    // Guardamos el ID en localStorage por si lo necesitas en el frontend
+                    localStorage.setItem('user_id', '" . $row['user_id'] . "');
+                    window.location.href='reservations.html';
+                  </script>";
         } else {
-            echo "Invalid credentials";
+            // ERROR PASSWORD
+            echo "<script>
+                    alert('Contraseña incorrecta.');
+                    window.location.href='login.html';
+                  </script>";
         }
     } else {
-        echo "No such user";
+        // ERROR USUARIO NO EXISTE
+        echo "<script>
+                alert('El usuario no existe.');
+                window.location.href='login.html';
+              </script>";
     }
 }
 
